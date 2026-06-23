@@ -1,5 +1,9 @@
 # 🛒 Simple Ecommerce Store - Spring Boot REST API
 
+[![build](https://github.com/roshanchitrang9307-gif/simple-ecommerce-store/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/roshanchitrang9307-gif/simple-ecommerce-store/actions)
+[![tag](https://img.shields.io/badge/release-v1.0.0-blue.svg)](https://github.com/roshanchitrang9307-gif/simple-ecommerce-store/releases)
+
+
 A modern, feature-rich e-commerce REST API built with **Spring Boot 4.1**, **JWT Authentication**, **MySQL**, and **Swagger OpenAPI** documentation. Production-ready with comprehensive testing, validation, and security.
 
 ## 📋 Features
