@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -14,36 +15,67 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public Product addProduct(ProductDTO dto) {
+    public ProductDTO createProduct(ProductDTO dto) {
         Product product = new Product();
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
-       product.setStockQuantity(dto.getStockQuantity());
+        product.setStockQuantity(dto.getStock());
         product.setCategory(dto.getCategory());
-        return productRepository.save(product);
+        product.setImageUrl(dto.getImageUrl());
+        Product saved = productRepository.save(product);
+        return convertToDTO(saved);
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDTO> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Product getProductById(Long id) {
-        return productRepository.findById(id)
+    public ProductDTO getProductById(Long id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+        return convertToDTO(product);
     }
 
-    public Product updateProduct(Long id, ProductDTO dto) {
-        Product product = getProductById(id);
+    public ProductDTO updateProduct(Long id, ProductDTO dto) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
-       product.setStockQuantity(dto.getStockQuantity());
+        product.setStockQuantity(dto.getStock());
         product.setCategory(dto.getCategory());
-        return productRepository.save(product);
+        product.setImageUrl(dto.getImageUrl());
+        Product updated = productRepository.save(product);
+        return convertToDTO(updated);
     }
 
     public void deleteProduct(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new RuntimeException("Product not found");
+        }
         productRepository.deleteById(id);
+    }
+
+    public List<ProductDTO> getProductsByCategory(String category) {
+        return productRepository.findByCategory(category)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private ProductDTO convertToDTO(Product product) {
+        ProductDTO dto = new ProductDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setDescription(product.getDescription());
+        dto.setPrice(product.getPrice());
+        dto.setStock(product.getStockQuantity());
+        dto.setCategory(product.getCategory());
+        dto.setImageUrl(product.getImageUrl());
+        return dto;
     }
 }
